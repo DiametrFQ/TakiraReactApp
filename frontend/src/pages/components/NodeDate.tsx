@@ -5,7 +5,7 @@ import { setQuestNodeData } from "../../store/data/reducer"
 function NodeDate({id}: {id: string}) {
     const dispatch = useDispatch()
     const clearData = useSelector(clearQuestData)
-    const node = clearData.nodes.find(n => n.id === id)
+    const node = clearData[id]
     
 
     const setName = (name: string) => {

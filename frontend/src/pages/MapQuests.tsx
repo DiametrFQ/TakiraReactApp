@@ -3,9 +3,9 @@ import ForceGraph2D, { NodeObject } from 'react-force-graph-2d';
 // import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearQuestData } from '../store/data/selectors';
-import { addQuestLink, addQuestNode, questDataReducer } from '../store/data/reducer';
-import { link, node } from '../types/graph';
+import { clearQuestData, questData } from '../store/data/selectors';
+import { addQuestLink, addQuestNode, questDataReducer, setFullData } from '../store/data/reducer';
+import { graph, link, node } from '../types/graph';
 import NodeDate from './components/NodeDate';
 
 
@@ -14,17 +14,17 @@ import NodeDate from './components/NodeDate';
 
 function MapQuests() {
   const ctxMap = new Map<string | number | undefined, CanvasRenderingContext2D>()
-  const [takeId, setTakeId] = useState({id: ''})
+  const [takeId, setTakeId] = useState('')
   const [focusedId, setFocusedId] = useState('')
 
-  // const data = useSelector(questData)
+  const data = useSelector(questData)
   const clearData = useSelector(clearQuestData)
 
-  const [graph, setGraphData] = useState<questDataReducer>(clearData)
+  const [graph, setGraphData] = useState<graph>(data)
 
   useEffect(() => {
-    setGraphData(clearData)
-  }, [clearData])
+    setGraphData(graph)
+  }, [graph])
 
   const dispatch = useDispatch()
 
@@ -39,21 +39,21 @@ function MapQuests() {
     });
     dispatch(addQuestNode({ id, name }))
   }
-  const addLink = ({ id, trueId }: node) => {
-    console.log({id, trueId, takeId})
+  const addLink = ({ id, name }: node) => {
+    console.log({id, takeId})
     if(!id) return new Error('id or trueId is empty')
-    if(takeId.id === '') {
-      setTakeId({id})
+    if(takeId === '') {
+      setTakeId(id)
     } 
     else {
       setGraphData(({ nodes, links }) => {
         return {
           nodes,
-          links: [...links, { source: takeId.id, target: id }] as link[]
+          links: [...links, { source: takeId, target: id }] as link[]
         };
       });
-      dispatch(addQuestLink({source: takeId.id, target: id}))
-      setTakeId({id: ''})
+      dispatch(addQuestLink({source: takeId, target: id, name}))
+      setTakeId('')
     }
   }
 
@@ -76,7 +76,23 @@ function MapQuests() {
     ctx.strokeText(name, x, y);
     ctx.fillText(name, x, y);
   }
-  
+  const handleChange = (e: React.ChangeEvent) => {
+    const fileReader = new FileReader();
+    fileReader.readAsText(e.target.files[0], "UTF-8");
+    fileReader.onload = e => {
+      const data = JSON.parse(e.target?.result as string)
+      console.log({data});
+      dispatch(setFullData(data))
+
+      const convert = {nodes: [], links: []}
+      Object.entries(data).forEach(([key, value]) => {
+          convert.nodes.push({id: key, name: value.name})
+          convert.links.push(...value.links.map(link => ({source: key, target: link.target})))
+      })
+
+      setGraphData(convert)
+    };
+  };
   return (
     <>
         <div className='graph'>
@@ -90,9 +106,9 @@ function MapQuests() {
               onNodeClick={(node) => setFocusedId(node.id)}
               onNodeRightClick={(node) => addLink(node)}
               onNodeDragEnd={node => {
-              node.fx = node.x;
-              node.fy = node.y;
-              node.fz = node.z;
+                node.fx = node.x;
+                node.fy = node.y;
+                node.fz = node.z;
               }}
 
               linkDirectionalArrowLength={3.5}
@@ -100,9 +116,10 @@ function MapQuests() {
               linkCurvature={0.25}
           />
           <div>
-              <button onClick={addNode}>ADD NODE</button>
+              <button onClick={addNode}>ADD NODE</button><br />
               {/* <button onClick={() => dizspatch(saveData(graphData))}>SAVE</button> */}
-              <button onClick={download}>DOWNLOAD</button>
+              <button onClick={download}>DOWNLOAD</button><br />
+              <input type="file" id="selectFiles" onChange={e => handleChange(e)}/><br />
 
           </div>
 
