@@ -4,9 +4,11 @@ import ForceGraph2D, { NodeObject } from 'react-force-graph-2d';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearQuestData, questData } from '../store/data/selectors';
-import { addQuestLink, addQuestNode, questDataReducer, setFullData } from '../store/data/reducer';
-import { graph, link, node } from '../types/graph';
+import { addQuestLink, addQuestNode, setFullData } from '../store/data/reducer';
+import { graph, node } from '../types/graph';
 import NodeDate from './components/NodeDate';
+import { mapData } from '../types/mapData';
+import data2graph from '../utils/data2graph';
 
 
 // const width = 10*5
@@ -49,7 +51,7 @@ function MapQuests() {
       setGraphData(({ nodes, links }) => {
         return {
           nodes,
-          links: [...links, { source: takeId, target: id }] as link[]
+          links: [...links, { source: takeId, target: id }]
         };
       });
       dispatch(addQuestLink({source: takeId, target: id, name}))
@@ -76,21 +78,16 @@ function MapQuests() {
     ctx.strokeText(name, x, y);
     ctx.fillText(name, x, y);
   }
-  const handleChange = (e: React.ChangeEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(!e.target.files) return new Error('файл не выбран')
+
     const fileReader = new FileReader();
     fileReader.readAsText(e.target.files[0], "UTF-8");
     fileReader.onload = e => {
-      const data = JSON.parse(e.target?.result as string)
-      console.log({data});
+
+      const data = JSON.parse(e.target?.result as string) as mapData
       dispatch(setFullData(data))
-
-      const convert = {nodes: [], links: []}
-      Object.entries(data).forEach(([key, value]) => {
-          convert.nodes.push({id: key, name: value.name})
-          convert.links.push(...value.links.map(link => ({source: key, target: link.target})))
-      })
-
-      setGraphData(convert)
+      setGraphData(data2graph(data))
     };
   };
   return (
@@ -117,7 +114,6 @@ function MapQuests() {
           />
           <div>
               <button onClick={addNode}>ADD NODE</button><br />
-              {/* <button onClick={() => dizspatch(saveData(graphData))}>SAVE</button> */}
               <button onClick={download}>DOWNLOAD</button><br />
               <input type="file" id="selectFiles" onChange={e => handleChange(e)}/><br />
 

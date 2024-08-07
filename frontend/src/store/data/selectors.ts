@@ -1,44 +1,11 @@
 import { AppState } from "..";
-import { graph } from "../../types/graph";
-import { questDataReducer } from "./reducer";
+import { mapData } from "../../types/mapData";
+import data2graph from "../../utils/data2graph";
+import shallowCopy from "../../utils/shallowCopy";
 
 export const questData = (state: AppState) => {
-    const data = JSON.parse(JSON.stringify(state.quest.data)) as {[key: string]: questDataReducer}
-
-    /**
-    {
-        "nodes": [ 
-            { 
-                "id": "id1",
-                "name": "name1",
-            },
-            { 
-                "id": "id2",
-                "name": "name2",
-            },
-            ...
-        ],
-        "links": [
-            {
-                "source": "id1",
-                "target": "id2"
-            },
-            ...
-        ]
-    } 
-    */
-    const convert = {nodes: [], links: []}
-    Object.entries(data).forEach(([key, value]) => {
-        convert.nodes.push({id: key, name: value.name})
-        convert.links.push(...value.links.map(link => ({source: key, target: link.target})))
-    })
-    // data.nodes.map(node => {
-    //     const id = node.id
-    //     node.id = node.name
-    //     node.name = id
-    //     return node
-    // })
-    return JSON.parse(JSON.stringify(convert)) as graph
+    const data = shallowCopy(state.quest.data) as mapData
+    return data2graph(data)
 }
 
-export const clearQuestData = (state: AppState): {[key: string]: questDataReducer} => JSON.parse(JSON.stringify(state.quest.data))
+export const clearQuestData = (state: AppState): mapData => shallowCopy(state.quest.data)

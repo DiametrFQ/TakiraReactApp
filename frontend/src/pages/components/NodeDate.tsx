@@ -6,7 +6,6 @@ function NodeDate({id}: {id: string}) {
     const dispatch = useDispatch()
     const clearData = useSelector(clearQuestData)
     const node = clearData[id]
-    
 
     const setName = (name: string) => {
         dispatch(setQuestNodeData({id, name}))

@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { link } from "../../types/graph";
+import { mapData } from "../../types/mapData";
 
-export type questDataReducer = {
-  id: string, 
-  name: string,
-  links: link[] 
+
+export type InitialState = {
+  data: mapData
 }
 
-const initialState: {data:{[key: string]: questDataReducer}} = {
+
+const initialState: InitialState = {
   data: 
   {
     "11bf5b37-e0b8-42e0-8dcf-dc8c4aefc000": {
@@ -38,7 +38,7 @@ const dataSlice = createSlice({
         // if(!payload.text)
         //   state.data[payload.id]!.text = payload.text
       },
-      setFullData(state, {payload}: {payload: {[key: string]: questDataReducer}}) {
+      setFullData(state, {payload}: {payload: mapData}) {
         state.data = payload
       }
     }

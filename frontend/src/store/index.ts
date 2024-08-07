@@ -1,13 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import dataReducer from "./data/reducer"; // Import your combined reducers
+import dataReducer from "./data/reducer";
 
 const store = configureStore({
   reducer: {
     quest: dataReducer,
-    //   resurses: resursersSlice,
-    //   trends: trendsSlice,
-    //   inputsState: inputsStateSlice,
-    //   modelWindow: modelWindowSlice,
   },
 });
 
