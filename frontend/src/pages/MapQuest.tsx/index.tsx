@@ -1,14 +1,16 @@
+import './style.css'
+
 import { useEffect, useState } from 'react'
 import ForceGraph2D, { NodeObject } from 'react-force-graph-2d';
 // import { CSS2DRenderer, CSS2DObject } from '//unpkg.com/three/examples/jsm/renderers/CSS2DRenderer.js';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearQuestData, questData } from '../store/data/selectors';
-import { addQuestLink, addQuestNode, setFullData } from '../store/data/reducer';
-import { graph, node } from '../types/graph';
-import NodeDate from './components/NodeDate';
-import { mapData } from '../types/mapData';
-import data2graph from '../utils/data2graph';
+import { clearQuestData, questData } from '../../store/data/selectors';
+import { addQuestLink, addQuestNode, setFullData } from '../../store/data/reducer';
+import { graph, node } from '../../types/graph';
+import NodeDate from '../components/NodeDate';
+import { mapData } from '../../types/mapData';
+import data2graph from '../../utils/data2graph';
 
 
 // const width = 10*5

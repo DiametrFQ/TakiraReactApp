@@ -1,0 +1,32 @@
+
+
+.MainPage{
+  & > .main-header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    justify-content:space-evenly;
+    align-items: center;
+    flex-direction: wrap;
+    border: 1px solid red;
+    
+    & > .acts{
+      display: flex;
+      justify-content:space-between;
+      align-items: center;
+      flex-direction: wrap;
+      border: 1px solid red;
+      width: 40vw;
+    }
+  }
+  & > .quests{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: wrap;
+    flex-direction: wrap;
+    border: 1px solid red;
+    width: 40vw
+  }
+}
